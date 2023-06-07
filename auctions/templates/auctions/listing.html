@@ -1,7 +1,79 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}{{title}}{% endblock %}
+
 {% block body %}
+<div class="row justify-content-center align-items-center">
+    <div class="col-10 col-md-8 col-lg-8">
+        <div class="row">
 
-test
+            <div class="col-lg-5 p-3">
+                {% if image_url %}
+                    <img src="{{image_url}}" width="100%">
+                {% else %}
+                    <img src="/static/auctions/images/default.jpg" width="100%">
+                {% endif %}
+            </div>
+            <div class="col-lg-7 border rounded-2 p-4">
+                <h3>{{title}}</h3>
+                <div class="mt-4">
+                    <p><i>Created by: {{created}}</i></p>
+                </div>
+                <hr>
+                <div class="mt-4 description">
+                    {{description}}
+                </div>
+                <div class="mt-4 text-center">
+                    <h5>Current Price : ${{price}} </h5>
+                </div>
+                <div class="mt-4 text-center">
+                    {% if user.is_authenticated  %}
+                        {% if user.id is not created.id %}
+                        <form action="{% url 'bid' id %}" method="post">
+                            {% csrf_token %}
+                            <div class="input-group px-5">
+                                <span class="input-group-text">$</span>
+                                {% for field in bidform %}
+                                    {{field}}
+                                {% endfor %}
+                            </div>
+                            <div class="d-grid gap-2 col-10 mx-auto mt-3">
+                                <input class="btn btn-primary" type="submit" value="Place bid">                  
+                            </div>
+                        </form>
 
+                        <form method="post">
+                            <div class="d-grid gap-2 col-10 mx-auto mt-2">
+                                <input class="btn btn-outline-success" type="submit" value="Add to watchlist">
+                            </div>
+                        </form>
+
+                        {% else %}
+                            <form method="post">
+                                <div class="d-grid gap-2 col-6 mx-auto mt-2">
+                                    <input class="btn btn-danger" type="submit" value="Close bid">
+                                </div>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'bid' id %}"> Sign in </a> to submit your bid
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 p-0">
+                <div class="mb-3">
+                    <label for="comments" class="form-label fs-4">Comments</label>
+                    <textarea class="form-control" id="comments" rows="3"></textarea>
+                </div>
+                <div class="text-end mt-3">
+                    <input class="btn btn-primary" type="submit" value="Add comment">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

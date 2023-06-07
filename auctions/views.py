@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .forms import CreateListingForm
-from .models import User
+from .forms import CreateListingForm, Bid
+from .models import User, Listing
 
 
 
@@ -86,4 +86,20 @@ def new_listing(request):
         })
 
 def listing(request, id):
-    return render(request, "auctions/listing.html")
+
+    listing = Listing.objects.get(pk=id)
+    print(listing.user.id)
+
+    return render(request, "auctions/listing.html", {
+        "id" : listing.id,
+        "title": listing.title,
+        "description": listing.description,
+        "image_url": listing.image,
+        "created": listing.user,
+        "price": listing.starting_bid,
+        "bidform": Bid()
+    })
+
+@login_required
+def bid(request, listing_id):
+    return HttpResponseRedirect(reverse('listing', args=[listing_id]))

@@ -12,7 +12,7 @@ class Category(models.Model):
         return self.category
 
 
-class NewListing(models.Model):
+class Listing(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=1000)
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
@@ -24,3 +24,8 @@ class NewListing(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.user}"
+
+class Bid(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
