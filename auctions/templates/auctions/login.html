@@ -16,6 +16,9 @@
         <div class="form-group">
             <input class="form-control" type="password" name="password" placeholder="Password">
         </div>
+        {% if request.GET.next %}
+            <input type="hidden" value="{{request.GET.next}}" name="next">
+        {% endif %}
         <input class="btn btn-primary" type="submit" value="Login">
     </form>
 
