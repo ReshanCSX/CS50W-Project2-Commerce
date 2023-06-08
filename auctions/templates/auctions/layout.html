@@ -52,7 +52,14 @@
             </div>
           </nav>
 
-        <div class="container-fluid d-grid pt-2 mt-4 ">
+        <div class="container-fluid d-grid pt-2 mt-2 ">
+
+          <div class="row d-flex justify-content-center">
+            <div class="col-10 col-md-10 col-lg-10">
+              {% include 'auctions/messages.html' %}
+            </div>
+          </div>
+
                 {% block body %}
                 {% endblock %}
         </div>

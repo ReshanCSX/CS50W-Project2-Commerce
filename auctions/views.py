@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import CreateListingForm, Bid
 from .models import User, Listing
+from django.contrib import messages
 
 
 
@@ -41,6 +42,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
+    messages.warning(request, 'Logged out')
     return HttpResponseRedirect(reverse("index"))
 
 
@@ -79,6 +81,7 @@ def new_listing(request):
         if form.is_valid():
             form.instance.user = request.user
             added_listing = form.save()
+            messages.success(request, "Listing Created")
             return HttpResponseRedirect(reverse("listing", args=[added_listing.pk]))
 
     return render(request, "auctions/newlisting.html", {
@@ -89,6 +92,7 @@ def listing(request, id):
 
     listing = Listing.objects.get(pk=id)
     print(listing.user.id)
+    print(listing.bidcount())
 
     return render(request, "auctions/listing.html", {
         "id" : listing.id,
@@ -97,7 +101,8 @@ def listing(request, id):
         "image_url": listing.image,
         "created": listing.user,
         "price": listing.starting_bid,
-        "bidform": Bid()
+        "bidform": Bid(),
+        "bid_count": listing.bidcount()
     })
 
 @login_required

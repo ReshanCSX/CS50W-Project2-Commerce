@@ -121,5 +121,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
+# Login URL for login required
 LOGIN_URL = 'login'
+
+
+# Passing messages to user
+# https://www.csestack.org/display-messages-form-submit-django/
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+}
