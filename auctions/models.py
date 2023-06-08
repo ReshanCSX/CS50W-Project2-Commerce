@@ -24,8 +24,20 @@ class Listing(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.user}"
+    
+    def bidcount(self):
+        return self.bids.all().count()
+    
+    def highest_bid(self):
+        if self.bidcount() is 0:
+            return self.starting_bid
+        else:
+            return round(self.bids.aggregate(price = models.Max('amount'))['price'],2) #https://docs.djangoproject.com/en/4.2/topics/db/aggregation/
 
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.amount} by {self.user.id}"

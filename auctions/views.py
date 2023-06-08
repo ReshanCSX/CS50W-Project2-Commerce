@@ -42,7 +42,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    messages.warning(request, 'Logged out')
+    messages.warning(request, 'You are now logged out.')
     return HttpResponseRedirect(reverse("index"))
 
 
@@ -88,11 +88,9 @@ def new_listing(request):
         "form": CreateListingForm()
         })
 
-def listing(request, id):
+def listing(request, listing_id):
 
-    listing = Listing.objects.get(pk=id)
-    print(listing.user.id)
-    print(listing.bidcount())
+    listing = Listing.objects.get(pk=listing_id)
 
     return render(request, "auctions/listing.html", {
         "id" : listing.id,
@@ -100,11 +98,28 @@ def listing(request, id):
         "description": listing.description,
         "image_url": listing.image,
         "created": listing.user,
-        "price": listing.starting_bid,
+        "price": listing.highest_bid(),
         "bidform": Bid(),
         "bid_count": listing.bidcount()
     })
 
 @login_required
 def bid(request, listing_id):
+
+    if request.method == "POST":
+        form = Bid(request.POST)
+
+        if form.is_valid():
+            bid_amount = form.cleaned_data['amount']
+            listing = Listing.objects.get(pk=listing_id)
+
+            if listing.highest_bid() >= bid_amount:
+                messages.error(request, 'Please ensure your bid exceeds the current highest bid.')
+            else:
+                form.instance.user = request.user
+                form.instance.listing = listing
+                form.save()
+                messages.success(request, "Your bid has been successfully added.")
+                HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
     return HttpResponseRedirect(reverse('listing', args=[listing_id]))
