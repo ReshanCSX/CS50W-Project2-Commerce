@@ -1,0 +1,54 @@
+{% extends "auctions/layout.html"%}
+
+{% block title %} Watchlist {% endblock %}
+
+{% block body %}
+
+<div class="row justify-content-center align-items-center">
+    <div class="col-10 col-md-8 col-lg-8">
+        <h2 class="text-center mb-4">Watchlist</h2>
+        {% for item in watchlist %}
+
+        <a href="{% url 'listing' item.id %}" class="text-decoration-none text-reset">
+            <div class="row">
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{% if item.image %}{{item.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid rounded-start card-img-top" alt="...">
+                        </div>
+                        <div class="col-md-8 d-grid align-items-center">
+                            <div class="card-body">
+
+                                <div class="row">
+                                    <div class="col-12 col-md-8 col-lg-9">
+                                        <h6 class="card-title">{{item.title}}</h6>
+                                        <span class="text-{% if item.active %}success{% else %}danger{% endif %} fw-bold fst-italic">{% if item.active %}Active{% else %} Closed {% endif %}</span>
+                                    </div>
+
+                                    <div class="col-10 col-md-4 col-lg-3">
+
+                                        <h4>${{item.highest_bid}}</h4>
+            
+
+                                        <form action="{% url 'unwatch' item.id %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="submit" value="Remove" class="btn btn-danger">
+                                        </form>
+
+                                    </div>
+                                </div>
+
+
+                                
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

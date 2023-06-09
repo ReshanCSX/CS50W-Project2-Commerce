@@ -21,6 +21,7 @@ class Listing(models.Model):
     active = models.BooleanField(default=True)
     category = models.ForeignKey(Category, on_delete=models.SET_DEFAULT, default="", blank=True, null=True, related_name="listings")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
+    watchlist = models.ManyToManyField(User, blank=True, related_name="watch_list")
 
     def __str__(self):
         return f"{self.title} by {self.user}"
@@ -33,6 +34,9 @@ class Listing(models.Model):
             return self.starting_bid
         else:
             return round(self.bids.aggregate(price = models.Max('amount'))['price'],2) #https://docs.djangoproject.com/en/4.2/topics/db/aggregation/
+
+    def watchlist_exist(self, user):
+        return self.watchlist.filter(pk=user.id).exists() # https://stackoverflow.com/questions/8461819/checking-for-objects-existence-in-manytomany-relation-django
 
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")

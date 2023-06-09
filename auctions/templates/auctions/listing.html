@@ -7,12 +7,8 @@
     <div class="col-10 col-md-8 col-lg-8">
         <div class="row">
 
-            <div class="col-lg-5 p-3">
-                {% if image_url %}
-                    <img src="{{image_url}}" width="100%">
-                {% else %}
-                    <img src="/static/auctions/images/default.jpg" width="100%">
-                {% endif %}
+            <div class="col-lg-5">
+                    <img src="{% if image_url %}{{image_url}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid" alt="Image of {{title}}">
             </div>
             <div class="col-lg-7 border rounded-2 p-4">
                 <h3>{{title}}</h3>
@@ -30,24 +26,29 @@
                 <div class="mt-4 text-center">
                     {% if user.is_authenticated  %}
                         {% if user.id is not created.id %}
-                        <form action="{% url 'bid' id %}" method="post">
-                            {% csrf_token %}
-                            <div class="input-group px-5">
-                                <span class="input-group-text">$</span>
-                                {% for field in bidform %}
-                                    {{field}}
-                                {% endfor %}
-                            </div>
-                            <div class="d-grid gap-2 col-10 mx-auto mt-3">
-                                <input class="btn btn-primary" type="submit" value="Place bid">                  
-                            </div>
-                        </form>
+                            <form action="{% url 'bid' id %}" method="post">
+                                {% csrf_token %}
+                                <div class="input-group px-5">
+                                    <span class="input-group-text">$</span>
+                                    {% for field in bidform %}
+                                        {{field}}
+                                    {% endfor %}
+                                </div>
+                                <div class="d-grid gap-2 col-10 mx-auto mt-3">
+                                    <input class="btn btn-primary" type="submit" value="Place bid">                  
+                                </div>
+                            </form>
 
-                        <form method="post">
-                            <div class="d-grid gap-2 col-10 mx-auto mt-2">
-                                <input class="btn btn-outline-success" type="submit" value="Add to watchlist">
-                            </div>
-                        </form>
+                            <form action="{% url 'watchlistchange' id %}" method="post">
+                                {% csrf_token %}
+                                <div class="d-grid gap-2 col-10 mx-auto mt-2">
+                                    {% if watch_list %}
+                                    <input class="btn btn-outline-danger" type="submit" value="Remove from watchlist">
+                                    {% else %}
+                                    <input class="btn btn-outline-success" type="submit" value="Add to watchlist">
+                                    {% endif %}
+                                </div>
+                            </form>
 
                         {% else %}
                             <form method="post">

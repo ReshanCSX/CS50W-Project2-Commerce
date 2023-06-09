@@ -100,7 +100,8 @@ def listing(request, listing_id):
         "created": listing.user,
         "price": listing.highest_bid(),
         "bidform": Bid(),
-        "bid_count": listing.bidcount()
+        "bid_count": listing.bidcount(),
+        "watch_list": listing.watchlist_exist(request.user)
     })
 
 @login_required
@@ -123,3 +124,42 @@ def bid(request, listing_id):
                 HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
     return HttpResponseRedirect(reverse('listing', args=[listing_id]))
+
+
+@login_required
+def watchlistchange(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
+        user = request.user
+
+        if listing.watchlist_exist(user):
+            listing.watchlist.remove(user)
+            messages.warning(request, "Item removed from watchlist.")
+            return redirect(reverse('listing', args=[listing_id]))
+        else:
+            listing.watchlist.add(user)
+            messages.success(request, "Item successfully added to watchlist.")
+            return redirect(reverse('listing', args=[listing_id]))
+
+
+@login_required
+def watchlist(request):
+    
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": request.user.watch_list.all()
+    })
+
+
+@login_required
+def unwatch(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
+        user = request.user
+
+        if listing.watchlist_exist(user):
+            listing.watchlist.remove(user)
+            messages.error(request, "Item removed from watchlist.")
+            return HttpResponseRedirect(reverse("watchlist"))
+        else:
+            messages.error(request, "Item is not in watchlist")
+
