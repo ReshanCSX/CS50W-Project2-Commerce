@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .forms import CreateListingForm, Bid
-from .models import User, Listing
+from .forms import CreateListingForm, BidForm, CommentsForm
+from .models import User, Listing, Comments
 from django.contrib import messages
 
 
@@ -75,7 +75,8 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
-        
+
+
 @login_required()
 def new_listing(request):
 
@@ -92,6 +93,7 @@ def new_listing(request):
         "form": CreateListingForm()
         })
 
+
 def listing(request, listing_id):
 
     listing = Listing.objects.get(pk=listing_id)
@@ -103,16 +105,20 @@ def listing(request, listing_id):
         "image_url": listing.image,
         "created": listing.user,
         "price": listing.highest_bid(),
-        "bidform": Bid(),
+        "bidform": BidForm(),
         "bid_count": listing.bidcount(),
-        "watch_list": listing.watchlist_exist(request.user)
+        "watch_list": listing.watchlist_exist(request.user),
+        "addcomments": CommentsForm(),
+        "comments": listing.comments.all(),
+        "commentscount": listing.comments.all().count()
     })
+
 
 @login_required
 def bid(request, listing_id):
 
     if request.method == "POST":
-        form = Bid(request.POST)
+        form = BidForm(request.POST)
 
         if form.is_valid():
             bid_amount = form.cleaned_data['amount']
@@ -139,11 +145,11 @@ def watchlistchange(request, listing_id):
         if listing.watchlist_exist(user):
             listing.watchlist.remove(user)
             messages.warning(request, "Item removed from watchlist.")
-            return redirect(reverse('listing', args=[listing_id]))
+            return HttpResponseRedirect(reverse('listing', args=[listing_id]))
         else:
             listing.watchlist.add(user)
             messages.success(request, "Item successfully added to watchlist.")
-            return redirect(reverse('listing', args=[listing_id]))
+            return HttpResponseRedirect(reverse('listing', args=[listing_id]))
 
 
 @login_required
@@ -166,4 +172,24 @@ def unwatch(request, listing_id):
             return HttpResponseRedirect(reverse("watchlist"))
         else:
             messages.error(request, "Item is not in watchlist")
+
+
+@login_required
+def comment(request, listing_id):
+    
+    if request.method == "POST":
+        
+        form = CommentsForm(request.POST)
+
+        if form.is_valid():
+            form.instance.user = request.user
+            form.instance.listing = Listing.objects.get(pk=listing_id)
+            form.save()
+            messages.success(request, "Comment added successfully.")
+            return HttpResponseRedirect(reverse('listing', args=[listing_id]))
+        else:
+            messages.error(request, "Failed to add comment. Please try again later.")
+            return HttpResponseRedirect(reverse('listing', args=[listing_id]))
+    
+
 

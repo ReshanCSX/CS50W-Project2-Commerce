@@ -5,6 +5,7 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+
 class Category(models.Model):
     category = models.CharField(max_length=64)
 
@@ -38,6 +39,7 @@ class Listing(models.Model):
     def watchlist_exist(self, user):
         return self.watchlist.filter(pk=user.id).exists() # https://stackoverflow.com/questions/8461819/checking-for-objects-existence-in-manytomany-relation-django
 
+
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
@@ -45,3 +47,13 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.amount} by {self.user.id}"
+    
+
+class Comments(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
+    comment = models.CharField(max_length=1000)
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.comment} by {self.user} in {self.listing}"
