@@ -1,7 +1,51 @@
 {% extends "auctions/layout.html" %}
 
-{% block body %}
-    <h2>Active Listings</h2>
+{% block title %}Active Listings{% endblock %}
 
-    TODO
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-10 col-md-8 col-lg-10">
+
+        <h2 class="text-center mb-4">Active Listings</h2>
+
+        <div class="container">
+            <div class="row gy-3 gx-3">
+                {% for listing in listings %}
+
+                    <div class="col-12 col-md-4 col-lg-3">
+                        
+                        <a href="{% url 'listing' listing.id %}" class="text-decoration-none text-reset">
+                            <div class="card h-100">
+                                <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid rounded-start card-img-listing" alt="...">
+                                <div class="card-body">
+                                    <p class="card-title text-truncate">{{listing.title}}</p>
+
+                                    <p class="card-text text-truncate mt-3">
+                                        <small>
+                                                {{listing.description}}
+                                        </small>
+                                    </p>
+
+                                    <div class="d-flex justify-content-between">
+                                        <h5> US $ {{listing.highest_bid }}</h5>
+                                        <span class="text-end">{{listing.bidcount}} Bid(s)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+
+                        
+                    
+                    
+                    
+                    </div>
+                {% empty %}
+                    <h5 class="text-muted">No active listings.</h5>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

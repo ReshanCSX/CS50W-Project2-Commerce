@@ -12,7 +12,11 @@ from django.contrib import messages
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    listings = Listing.objects.filter(active=True)
+
+    return render(request, "auctions/index.html",{
+        "listings" : listings
+    })
 
 
 def login_view(request):
