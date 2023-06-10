@@ -191,6 +191,7 @@ def comment(request, listing_id):
             messages.error(request, "Failed to add comment. Please try again later.")
             return HttpResponseRedirect(reverse('listing', args=[listing_id]))
         
+
 def categories(request):
 
     categories = Category.objects.all()
@@ -201,7 +202,13 @@ def categories(request):
 
 
 def category_listing(request, category_id):
-    pass
+    
+    category = Category.objects.get(pk=category_id)
+
+    return render(request, "auctions/categorylisting.html",{
+        "category": category.listings.filter(active=True),
+        "category_name": category
+    })
     
 
 
