@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from .forms import CreateListingForm, BidForm, CommentsForm
-from .models import User, Listing, Comments
+from .models import User, Listing, Comments, Category
 from django.contrib import messages
 
 
@@ -190,6 +190,18 @@ def comment(request, listing_id):
         else:
             messages.error(request, "Failed to add comment. Please try again later.")
             return HttpResponseRedirect(reverse('listing', args=[listing_id]))
+        
+def categories(request):
+
+    categories = Category.objects.all()
+
+    return render(request, "auctions/categories.html",{
+        "categories" : categories
+    })
+
+
+def category_listing(request, category_id):
+    pass
     
 
 

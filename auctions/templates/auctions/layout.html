@@ -24,13 +24,16 @@
               <div class="collapse navbar-collapse ms-3" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a class="nav-link {% if url_name == 'index'%}active{% endif %}" aria-current="page" href="{% url 'index' %}">Active Listings</a>
+                    <a class="nav-link {% if url_name == 'index' %}active{% endif %}" aria-current="page" href="{% url 'index' %}">Active Listings</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link {% if url_name == 'newlisting'%}active{% endif %}" href="{% url 'newlisting' %}">Create</a>
+                    <a class="nav-link {% if url_name == 'categories' %}active{% endif %}" href="{% url 'categories' %}">Categories</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link {% if url_name == 'watchlist'%}active{% endif %}" href="{% url 'watchlist' %}">Watchlist</a>
+                    <a class="nav-link {% if url_name == 'newlisting' %}active{% endif %}" href="{% url 'newlisting' %}">Create</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link {% if url_name == 'watchlist' %}active{% endif %}" href="{% url 'watchlist' %}">Watchlist</a>
                   </li>
                 </ul>
                 <span class="navbar-text">
