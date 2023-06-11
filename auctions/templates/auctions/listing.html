@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 {% load humanize %}
 
-{% block title %}{{title}}{% endblock %}
+{% block title %}{{listing.title}}{% endblock %}
 
 {% block body %}
 <div class="row justify-content-center">
@@ -9,25 +9,42 @@
         <div class="row">
 
             <div class="col-lg-5">
-                    <img src="{% if image_url %}{{image_url}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid" alt="Image of {{title}}">
+                    <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid" alt="Image of {{listing.title}}">
             </div>
             <div class="col-lg-7 border rounded-2 p-4">
-                <h3>{{title}}</h3>
-                <div class="mt-4">
-                    <p><i>Created by: {{created}}</i></p>
+                <!-- Title -->
+                <h3>{{listing.title}}</h3>
+                <!-- Listing creator and Time -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <small><p class="text-muted">Created by: {{listing.user}} | {{listing.time|naturaltime}}</p></small>
                 </div>
                 <hr>
-                <div class="mt-4 description">
-                    {{description}}
+                <!-- Listing Description -->
+                <div class="mt-4 description text-muted">
+                    <p>{{listing.description}}</p>
                 </div>
+                <!-- Price, Bid count, bidder status -->
                 <div class="mt-4 text-center">
+                    <div>
                     <h4>Current Price : ${{price|intcomma}}</h4>
-                    [ {{bid_count}} bids ]
+                    <small>{{bid_count}} bid(s)</small> 
+                    </div>
+                    {% if user.is_authenticated  %}
+                        {% if user_in_bids %}
+                            {% if user_in_bids == request.user %}
+                                <span class="badge bg-success">You are currently the highest bidder.</span>
+                            {% else%}
+                                <span class="badge bg-danger">You are no longer the highest bidder.</span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
                 </div>
+
+                <!-- Bidding form, Watchlist -->
                 <div class="mt-4 text-center">
                     {% if user.is_authenticated  %}
-                        {% if user.id is not created.id %}
-                            <form action="{% url 'bid' id %}" method="post">
+                        {% if user.id is not listing.user.id %}
+                            <form action="{% url 'bid' listing.id %}" method="post">
                                 {% csrf_token %}
                                 <div class="input-group px-5">
                                     <span class="input-group-text">$</span>
@@ -40,13 +57,13 @@
                                 </div>
                             </form>
 
-                            <form action="{% url 'watchlistchange' id %}" method="post">
+                            <form action="{% url 'watchlistchange' listing.id %}" method="post">
                                 {% csrf_token %}
                                 <div class="d-grid gap-2 col-10 mx-auto mt-2">
                                     {% if watch_list %}
-                                    <input class="btn btn-outline-danger" type="submit" value="Remove from watchlist">
+                                        <input class="btn btn-outline-danger" type="submit" value="Remove from watchlist">
                                     {% else %}
-                                    <input class="btn btn-outline-success" type="submit" value="Add to watchlist">
+                                        <input class="btn btn-outline-success" type="submit" value="Add to watchlist">
                                     {% endif %}
                                 </div>
                             </form>
@@ -59,13 +76,14 @@
                             </form>
                         {% endif %}
                     {% else %}
-                        <span class="text-danger"><a href="{% url 'bid' id %}" class="text-danger"> Sign in </a> to submit your bid.</span>
+                        <span class="text-danger"><a href="{% url 'bid' listing.id %}" class="text-danger"> Sign in </a> to submit your bid.</span>
                     {% endif %}
                 </div>
             </div>
 
         </div>
 
+        <!-- Comments section -->
         <div class="row mt-4">
             <div class="col-12 p-0">
 
@@ -73,7 +91,8 @@
                 {% if user.is_authenticated %}
                     <div class="mb-3">
                         
-                        <form action="{% url 'comment' id %}" method="post">
+                        <!-- Comments form -->
+                        <form action="{% url 'comment' listing.id %}" method="post">
                             {% csrf_token %}
                             {% for field in addcomments %}
                                 {{field}}
@@ -86,10 +105,11 @@
                     </div>
                 {% else %}
                     <div class="my-3 text-center">
-                        <span class="text-danger"><a href="{% url 'bid' id %}" class="text-danger"> Sign in </a> to comment.</span>
+                        <span class="text-danger"><a href="{% url 'bid' listing.id %}" class="text-danger"> Sign in </a> to comment.</span>
                     </div>
                 {% endif %}
                 
+                <!-- Comments -->
                 <div class="container_fluid my-4">
                     {% for comment in comments %}
 

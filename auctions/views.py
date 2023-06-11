@@ -15,7 +15,7 @@ def index(request):
     listings = Listing.objects.filter(active=True)
 
     return render(request, "auctions/index.html",{
-        "listings" : listings
+        "listings" : listings.filter(active=True)
     })
 
 
@@ -98,19 +98,21 @@ def listing(request, listing_id):
 
     listing = Listing.objects.get(pk=listing_id)
 
+    # highest_bid = listing.highest_bid()
+
+    # highest = listing.bids.get(amount=highest_bid)
+
+
     return render(request, "auctions/listing.html", {
-        "id" : listing.id,
-        "title": listing.title,
-        "description": listing.description,
-        "image_url": listing.image,
-        "created": listing.user,
+        "listing": listing,
         "price": listing.highest_bid(),
         "bidform": BidForm(),
         "bid_count": listing.bidcount(),
         "watch_list": listing.watchlist_exist(request.user),
         "addcomments": CommentsForm(),
         "comments": listing.comments.all(),
-        "commentscount": listing.comments.all().count()
+        "commentscount": listing.comments.all().count(),
+        "user_in_bids": listing.highest_bid_user(request.user)
     })
 
 
