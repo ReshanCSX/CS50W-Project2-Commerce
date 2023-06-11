@@ -18,17 +18,13 @@
                             <div class="card h-100">
                                 <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid rounded-start card-img-listing" alt="...">
                                 <div class="card-body">
-                                    <p class="card-title text-truncate">{{listing.title}}</p>
+                                    <p class="card-title text-truncate fw-bold">{{listing.title}}</p>
 
-                                    <p class="card-text text-truncate mt-3">
-                                        <small>
-                                                {{listing.description}}
-                                        </small>
-                                    </p>
+                                    <p class="card-text text-truncate text-muted mt-3"><small>{{listing.description}}</small></p>
 
-                                    <div class="d-flex justify-content-between">
-                                        <h5> US $ {{listing.highest_bid }}</h5>
-                                        <span class="text-end">{{listing.bidcount}} Bid(s)</span>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="m-0 fw-bold text-sucess"> US $ {{listing.highest_bid }}</h5>
+                                        <small><span class="text-end">{{listing.bidcount}} Bid(s)</span></small>
                                     </div>
                                 </div>
                             </div>
