@@ -25,8 +25,15 @@ body {
     height: 15rem;
 }
 
-.category-hover:hover{
+.category_item{
+    color: #34495e;
+}
+
+
+.category_item:hover{
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    background-color: #ecf0f1 !important;
+    color: #2c3e50;
 }
 
 /* https://ordinarycoders.com/blog/article/codepen-bootstrap-card-hovers */
