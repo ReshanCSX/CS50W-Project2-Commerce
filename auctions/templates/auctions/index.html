@@ -16,7 +16,7 @@
                         
                         <a href="{% url 'listing' listing.id %}" class="text-decoration-none text-reset">
                             <div class="card h-100">
-                                <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid rounded-start card-img-listing" alt="...">
+                                <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid rounded-start card-img-listing" alt="image of {{listing.title}}">
                                 <div class="card-body">
                                     <p class="card-title text-truncate fw-bold">{{listing.title}}</p>
 
