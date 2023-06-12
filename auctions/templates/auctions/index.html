@@ -1,4 +1,5 @@
 {% extends "auctions/layout.html" %}
+{% load humanize %}
 
 {% block title %}Active Listings{% endblock %}
 
@@ -23,7 +24,7 @@
                                     <p class="card-text text-truncate text-muted mt-3"><small>{{listing.description}}</small></p>
 
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h5 class="m-0 fw-bold text-sucess"> US $ {{listing.highest_bid }}</h5>
+                                        <h5 class="m-0 fw-bold text-sucess"> US $ {{listing.highest_bid|intcomma }}</h5>
                                         <small><span class="text-end">{{listing.bidcount}} Bid(s)</span></small>
                                     </div>
                                 </div>
