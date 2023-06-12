@@ -67,9 +67,9 @@ def register(request):
             user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
-            return render(request, "auctions/register.html", {
-                "message": "Username already taken."
-            })
+            messages.error(request, "Username already taken.")
+            return HttpResponseRedirect(reverse("register"))
+
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
