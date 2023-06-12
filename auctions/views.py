@@ -117,6 +117,13 @@ def listing(request, listing_id):
 @login_required
 def bid(request, listing_id):
 
+    def bid_save():
+        form.instance.user = request.user
+        form.instance.listing = listing
+        form.save()
+        messages.success(request, "Your bid has been successfully added.")
+        HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
     if request.method == "POST":
         form = BidForm(request.POST)
 
@@ -124,16 +131,17 @@ def bid(request, listing_id):
             bid_amount = form.cleaned_data['amount']
             listing = Listing.objects.get(pk=listing_id)
 
-            if listing.highest_bid() >= bid_amount:
+            if listing.bidcount() is 0:
+                if listing.highest_bid() > bid_amount:
+                    messages.error(request, 'Please make sure your bid is higher than or equal to the current highest bid.')
+                else:
+                    bid_save()
+            elif listing.highest_bid() >= bid_amount:
                 messages.error(request, 'Please ensure your bid exceeds the current highest bid.')
             elif not listing.active:
                 messages.error(request, 'Sorry, you cannot place a bid on a closed auction.')
             else:
-                form.instance.user = request.user
-                form.instance.listing = listing
-                form.save()
-                messages.success(request, "Your bid has been successfully added.")
-                HttpResponseRedirect(reverse("listing", args=[listing_id]))
+                bid_save()
 
     return HttpResponseRedirect(reverse('listing', args=[listing_id]))
 
