@@ -29,15 +29,15 @@
                     <h4>Current Price : ${{price|intcomma}}</h4>
                     <small>{{bid_count}} bid(s)</small> 
                     </div>
-                    {% if user.is_authenticated  %}
-                        {% if user_in_bids %}
-                            {% if user_in_bids == request.user %}
-                                <span class="badge bg-success">You are currently the highest bidder.</span>
-                            {% else%}
-                                <span class="badge bg-danger">You are no longer the highest bidder.</span>
-                            {% endif %}
+
+                    {% if user_in_bids %}
+                        {% if listing.highest_bid_user == request.user %}
+                            <span class="badge bg-success">You are currently the highest bidder.</span>
+                        {% else%}
+                            <span class="badge bg-danger">You are no longer the highest bidder.</span>
                         {% endif %}
                     {% endif %}
+
                 </div>
 
                 <!-- Bidding form, Watchlist -->
@@ -69,7 +69,8 @@
                             </form>
 
                         {% else %}
-                            <form method="post">
+                            <form action="{% url 'close_auction' listing.id %}" method="post">
+                                {% csrf_token %}
                                 <div class="d-grid gap-2 col-6 mx-auto mt-2">
                                     <input class="btn btn-danger" type="submit" value="Close bid">
                                 </div>

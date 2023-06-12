@@ -41,16 +41,14 @@ class Listing(models.Model):
 
 
     def user_in_bids(self, user):
+        return self.bids.filter(user=user.id).exists()
+
+    def highest_bid_user(self):
         if self.bidcount() is 0:
             return None
         else:
-            return self.bids.filter(user=user.id).exists()
-
-    def highest_bid_user(self, user):
-        if self.user_in_bids(user):
             return self.bids.get(amount=self.highest_bid()).user
-        else:
-            return None
+
         
 
 

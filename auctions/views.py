@@ -98,11 +98,6 @@ def listing(request, listing_id):
 
     listing = Listing.objects.get(pk=listing_id)
 
-    # highest_bid = listing.highest_bid()
-
-    # highest = listing.bids.get(amount=highest_bid)
-
-
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "price": listing.highest_bid(),
@@ -112,7 +107,7 @@ def listing(request, listing_id):
         "addcomments": CommentsForm(),
         "comments": listing.comments.all(),
         "commentscount": listing.comments.all().count(),
-        "user_in_bids": listing.highest_bid_user(request.user)
+        "user_in_bids": listing.user_in_bids(request.user)
     })
 
 
@@ -211,6 +206,20 @@ def category_listing(request, category_id):
         "category": category.listings.filter(active=True),
         "category_name": category
     })
-    
+
+
+@login_required
+def close_auction(request, listing_id):
+
+    if request.method == "POST":
+
+        listing = Listing.objects.get(pk=listing_id)
+
+        if listing.user == request.user:
+            Listing.objects.filter(pk=listing_id).update(active=False)
+            messages.success(request, f"Auction successfully closed. The winning bid goes to {listing.highest_bid_user()}.") 
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+        else:
+            messages.error(request, "Sorry, you do not have the necessary permissions to close the auction.")
 
 
