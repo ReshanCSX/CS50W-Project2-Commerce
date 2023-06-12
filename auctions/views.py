@@ -98,6 +98,9 @@ def listing(request, listing_id):
 
     listing = Listing.objects.get(pk=listing_id)
 
+    if not listing.active:
+        messages.error(request, "This auction is closed")
+
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "price": listing.highest_bid(),
@@ -123,6 +126,8 @@ def bid(request, listing_id):
 
             if listing.highest_bid() >= bid_amount:
                 messages.error(request, 'Please ensure your bid exceeds the current highest bid.')
+            elif not listing.active:
+                messages.error(request, 'Sorry, you cannot place a bid on a closed auction.')
             else:
                 form.instance.user = request.user
                 form.instance.listing = listing
@@ -218,7 +223,7 @@ def close_auction(request, listing_id):
         if listing.user == request.user:
             Listing.objects.filter(pk=listing_id).update(active=False)
             messages.success(request, f"Auction successfully closed. The winning bid goes to {listing.highest_bid_user()}.") 
-            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+            return HttpResponseRedirect(reverse("index"))
         else:
             messages.error(request, "Sorry, you do not have the necessary permissions to close the auction.")
 

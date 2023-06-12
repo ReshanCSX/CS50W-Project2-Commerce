@@ -7,6 +7,11 @@ body {
     text-align: justify;
 }
 
+.listing-img{
+    width: 100%;
+    height: auto;
+}
+
 .card-img-top, .card-img-listing {
     width: 100%;    
     object-fit: cover;

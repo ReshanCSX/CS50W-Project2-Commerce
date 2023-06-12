@@ -9,7 +9,7 @@
         <div class="row">
 
             <div class="col-lg-5">
-                    <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid" alt="Image of {{listing.title}}">
+                    <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="listing-img" alt="Image of {{listing.title}}">
             </div>
             <div class="col-lg-7 border rounded-2 p-4">
                 <!-- Title -->
@@ -23,63 +23,96 @@
                 <div class="mt-4 description text-muted">
                     <p>{{listing.description}}</p>
                 </div>
-                <!-- Price, Bid count, bidder status -->
+                <!-- Price and Bid count -->
                 <div class="mt-4 text-center">
                     <div>
-                    <h4>Current Price : ${{price|intcomma}}</h4>
-                    <small>{{bid_count}} bid(s)</small> 
+                        <h4>Current Price : ${{price|intcomma}}</h4>
+                        <small>{{bid_count}} bid(s)</small> 
                     </div>
 
-                    {% if user_in_bids %}
-                        {% if listing.highest_bid_user == request.user %}
-                            <span class="badge bg-success">You are currently the highest bidder.</span>
-                        {% else%}
-                            <span class="badge bg-danger">You are no longer the highest bidder.</span>
+                    <!-- if listing is active -->
+                    {% if listing.active %}
+                    
+                        <!-- bidder status -->
+                        {% if user_in_bids %}
+                            {% if listing.highest_bid_user == request.user %}
+                                <span class="badge bg-success">You are currently the highest bidder.</span>
+                            {% else%}
+                                <span class="badge bg-danger">You are no longer the highest bidder.</span>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
 
-                </div>
+                        <!-- Bidding and watchlist section -->
+                        <div class="mt-4 text-center">
 
-                <!-- Bidding form, Watchlist -->
-                <div class="mt-4 text-center">
-                    {% if user.is_authenticated  %}
-                        {% if user.id is not listing.user.id %}
-                            <form action="{% url 'bid' listing.id %}" method="post">
-                                {% csrf_token %}
-                                <div class="input-group px-5">
-                                    <span class="input-group-text">$</span>
-                                    {% for field in bidform %}
-                                        {{field}}
-                                    {% endfor %}
-                                </div>
-                                <div class="d-grid gap-2 col-10 mx-auto mt-3">
-                                    <input class="btn btn-primary" type="submit" value="Place bid">                  
-                                </div>
-                            </form>
+                            {% if user.is_authenticated  %}
+                                {% if user.id is not listing.user.id %}
+                                    <!-- Bidding form -->
+                                    <form action="{% url 'bid' listing.id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="input-group px-5">
+                                            <span class="input-group-text">$</span>
+                                            {% for field in bidform %}
+                                                {{field}}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="d-grid gap-2 col-10 mx-auto mt-3">
+                                            <input class="btn btn-primary" type="submit" value="Place bid">                  
+                                        </div>
+                                    </form>
 
-                            <form action="{% url 'watchlistchange' listing.id %}" method="post">
-                                {% csrf_token %}
-                                <div class="d-grid gap-2 col-10 mx-auto mt-2">
-                                    {% if watch_list %}
-                                        <input class="btn btn-outline-danger" type="submit" value="Remove from watchlist">
-                                    {% else %}
-                                        <input class="btn btn-outline-success" type="submit" value="Add to watchlist">
-                                    {% endif %}
-                                </div>
-                            </form>
+                                    <!-- Watchlist  -->
+                                    <form action="{% url 'watchlistchange' listing.id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="d-grid gap-2 col-10 mx-auto mt-2">
+                                            {% if watch_list %}
+                                                <input class="btn btn-outline-danger" type="submit" value="Remove from watchlist">
+                                            {% else %}
+                                                <input class="btn btn-outline-success" type="submit" value="Add to watchlist">
+                                            {% endif %}
+                                        </div>
+                                    </form>
 
-                        {% else %}
-                            <form action="{% url 'close_auction' listing.id %}" method="post">
-                                {% csrf_token %}
-                                <div class="d-grid gap-2 col-6 mx-auto mt-2">
-                                    <input class="btn btn-danger" type="submit" value="Close bid">
-                                </div>
-                            </form>
-                        {% endif %}
+                                {% else %}
+                                    <form action="{% url 'close_auction' listing.id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="d-grid gap-2 col-6 mx-auto mt-2">
+                                            <input class="btn btn-danger" type="submit" value="Close bid">
+                                        </div>
+                                    </form>
+                                {% endif %}
+
+                            {% else %}
+                                <span class="text-danger"><a href="{% url 'bid' listing.id %}" class="text-danger"> Sign in </a> to submit your bid.</span>
+                            {% endif %}
+                        </div>
+                
+
+                    <!-- if listing is closed -->
                     {% else %}
-                        <span class="text-danger"><a href="{% url 'bid' listing.id %}" class="text-danger"> Sign in </a> to submit your bid.</span>
+
+                        <!-- if user has bids -->
+                        {% if user_in_bids %}
+                            {% if listing.highest_bid_user == request.user %}
+                                <span class="badge bg-success">Congratulations! You have won the auction.</span>
+                            {% else%}
+                                <span class="badge bg-danger">Unfortunately, your bid was not successful. Thank you for participating."</span>
+                            {% endif %}
+
+                        <!-- if creator is the current user -->
+                        {% elif listing.user == request.user %}
+                            <span class="badge bg-success">Auction successfully closed.
+
+                                <!-- if no bids -->
+                                {% if listing.bidcount > 0 %}
+                                    The winning is {{listing.highest_bid_user}}.
+                                {% endif %}
+                            </span>
+                        {% endif %}
                     {% endif %}
+
                 </div>
+
             </div>
 
         </div>
