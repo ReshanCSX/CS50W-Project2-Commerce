@@ -165,7 +165,7 @@ def watchlistchange(request, listing_id):
 def watchlist(request):
     
     return render(request, "auctions/watchlist.html", {
-        "watchlist": request.user.watch_list.all()
+        "watchlist": request.user.watchlist.all()
     })
 
 

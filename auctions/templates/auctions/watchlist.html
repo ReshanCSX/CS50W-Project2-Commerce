@@ -4,49 +4,53 @@
 
 {% block body %}
 
-<div class="row justify-content-center">
-    <div class="col-10 col-md-8 col-lg-8">
+<div class="row justify-content-center mb-5">
+    <div class="col-10 col-md-8 col-lg-10">
+
         <h2 class="text-center mb-4">Watchlist</h2>
-        {% for item in watchlist %}
 
-            <a href="{% url 'listing' item.id %}" class="text-decoration-none text-reset">
-                <div class="row">
-                    <div class="card mb-3">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <img src="{% if item.image %}{{item.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid rounded-start card-img-top" alt="image of item.title">
-                            </div>
-                            <div class="col-md-8 d-grid align-items-center">
+        <div class="container">
+            <div class="row gy-3 gx-3">
+                {% for listing in watchlist %}
+
+                    <div class="col-12 col-md-4 col-lg-3">
+                        
+                        <a href="{% url 'listing' listing.id %}" class="text-decoration-none text-reset">
+                            <div class="card h-100">
+                                <img src="{% if listing.image %}{{listing.image}}{% else %}/static/auctions/images/default.jpg{% endif %}" class="img-fluid rounded-start card-img-listing position-relative" alt="image of {{listing.title}}">
                                 <div class="card-body">
+                                    <p class="card-title text-truncate fw-bold">{{listing.title}}</p>
 
-                                    <div class="row">
-                                        <div class="col-12 col-md-8 col-lg-9">
-                                            <h6 class="card-title">{{item.title}}</h6>
-                                            <span class="text-{% if item.active %}success{% else %}danger{% endif %} fw-bold fst-italic">{% if item.active %}Active{% else %} Closed {% endif %}</span>
-                                        </div>
-
-                                        <div class="col-10 col-md-4 col-lg-3">
-
-                                            <h4>${{item.highest_bid}}</h4>
-                
-
-                                            <form action="{% url 'unwatch' item.id %}" method="post">
-                                                {% csrf_token %}
-                                                <input type="submit" value="Remove" class="btn btn-danger">
-                                            </form>
-
-                                        </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="m-0 fw-bold text-sucess"> US $ {{listing.highest_bid }}</h5>
+                                        {% if listing.active %}
+                                            <span class="position-absolute top-0 end-0 badge bg-success m-2">Active</span>
+                                        {% else %}
+                                            <span class="position-absolute top-0 end-0 badge bg-danger m-2">Closed</span>
+                                        {% endif %}
                                     </div>
 
+                                    <form action="{% url 'unwatch' listing.id %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="submit" value="Remove" class="btn btn-danger">
+                                    </form>
                                 </div>
                             </div>
-                        </div>
+                        </a>
+                        
                     </div>
-                </div>
-            </a>
-            {% empty %}
-            <h5 class="text-muted text-center mt-5">Your watchlist is empty.</h5>
-        {% endfor %}
+                {% empty %}
+                    <h5 class="text-muted text-center mt-5">No active listings.</h5>
+                    <div class="d-flex justify-content-center">
+                        <a href="{% url 'index' %}" class="btn btn-outline-primary">Go back to listings</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
 </div>
+
+
+
 {% endblock %}

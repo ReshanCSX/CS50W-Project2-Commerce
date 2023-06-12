@@ -22,7 +22,7 @@ class Listing(models.Model):
     active = models.BooleanField(default=True)
     category = models.ForeignKey(Category, on_delete=models.SET_DEFAULT, default="", blank=True, null=True, related_name="listings")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
-    watchlist = models.ManyToManyField(User, blank=True, related_name="watch_list")
+    watchlist = models.ManyToManyField(User, blank=True, related_name="watchlist")
 
     def __str__(self):
         return f"{self.title} by {self.user}"
