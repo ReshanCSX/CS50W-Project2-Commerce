@@ -29,7 +29,7 @@
                   <li class="nav-item">
                     <a class="nav-link {% if url_name == 'categories' %}active{% endif %}" href="{% url 'categories' %}">Categories</a>
                   </li>
-                  {% if user.authenticated %}
+                  {% if user.is_authenticated %}
                   <li class="nav-item">
                     <a class="nav-link {% if url_name == 'newlisting' %}active{% endif %}" href="{% url 'newlisting' %}">Create Listing</a>
                   </li>
