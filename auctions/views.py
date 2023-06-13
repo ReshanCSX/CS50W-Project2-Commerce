@@ -107,7 +107,7 @@ def listing(request, listing_id):
         "bid_count": listing.bidcount(),
         "watch_list": listing.watchlist_exist(request.user),
         "addcomments": CommentsForm(),
-        "comments": listing.comments.all(),
+        "comments": listing.comments.all().order_by('-time'),
         "commentscount": listing.comments.all().count(),
         "user_in_bids": listing.user_in_bids(request.user)
     })
